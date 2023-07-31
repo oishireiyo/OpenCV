@@ -69,7 +69,7 @@ class PerspectiveNPoints(object):
                          float(elements[3].replace('\n', '')))
 
     def parse_detected_facial_points_2d(self, landmarks):
-        logger.debug('Parse detected facial 2D points.')
+        # logger.debug('Parse detected facial 2D points.')
         self.facial_points_2d = {}
         for landmark in landmarks:
             self.facial_points_2d[len(self.facial_points_2d)] = \
@@ -85,20 +85,18 @@ class PerspectiveNPoints(object):
 
         return (success, rotation, translation)
 
-    def project_points_used_in_pnp(self, rotation = None, translation = None):
+    def project_points_used_in_pnp(self):
         points_3d_cal = np.array([self.facial_points_3d[index] for index in self.landmarks_indices])
         points_2d_cal = np.array([self.facial_points_2d[index] for index in self.landmarks_indices])
 
-        if (rotation is not None) and (translation is not None):
-            _, rotation, translation = self.perspective_n_points()
+        _, rotation, translation = self.perspective_n_points()
         projected_points_2d_cal, _ = \
             cv2.projectPoints(points_3d_cal, rotation, translation, self.cam_matrix, self.distortion_matrix)
 
         return (points_2d_cal, projected_points_2d_cal)
 
-    def project_given_points(self, points_3d, rotation = None, translation = None):
-        if (rotation is not None) and (translation is not None):
-            _, rotation, translation = self.perspective_n_points()
+    def project_given_points(self, points_3d):
+        _, rotation, translation = self.perspective_n_points()
         projected_points_2d_cal, _ = \
             cv2.projectPoints(points_3d, rotation, translation, self.cam_matrix, self.distortion_matrix)
 
