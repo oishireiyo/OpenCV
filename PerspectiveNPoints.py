@@ -1,7 +1,8 @@
 # Standard python modules
 import os
 import sys
-import time 
+import time
+import math
 
 # Logging
 import logging
@@ -103,11 +104,14 @@ class PerspectiveNPoints(object):
         return projected_points_2d_cal
     
     def get_roll_pitch_yaw(self):
-        from math import pi, atan2, asin
-        _, rotation, _ = self.perspective_n_points()
-        R = cv2.Rodrigues(rotation)[0]
-        roll = 188 * atan2(-R[2][1], R[2][2]) / pi
-        pitch = 180 * asin(R[2][0]) / pi
-        yaw = 180 * atan2(-R[1][0], R[0][0]) / pi
+        _, rotation, translation = self.perspective_n_points()
+        rodrigues = cv2.Rodrigues(rotation)[0]
+        proj_matrix = np.hstack((rodrigues, translation))
+        eular_angles = cv2.decomposeProjectionMatrix(proj_matrix)[6]
 
-        return (roll, pitch, yaw)
+        pitch, yaw, roll = [math.radians(_) for _ in eular_angles]
+        pitch = math.degrees(math.asin(math.sin(pitch)))
+        yaw = math.degrees(math.asin(math.sin(yaw)))
+        roll = -math.degrees(math.asin(math.sin(roll)))
+
+        return pitch, yaw, roll
