@@ -14,6 +14,7 @@ stream_handler.setFormatter(handler_format)
 logger.addHandler(stream_handler)
 
 # Advanced modules
+from ultralytics import YOLO
 import cv2
 import numpy as np
 
@@ -44,6 +45,6 @@ class BlurDetection(object):
         key = cv2.waitKey(0)
 
 if __name__ == '__main__':
-    path = '/home/oishi/Inputs/Images/Kanna_Hashimoto.jpg'
+    path = '../Inputs/Images/Kanna_Hashimoto.jpg'
     blur_detector = BlurDetection(input_image_name = path)
     blur_detector.main()
